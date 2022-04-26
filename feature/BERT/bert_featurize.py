@@ -18,8 +18,9 @@ class BertEncoder(object):
         self.tokenizer = Tokenizer(config.get("dict_path"), do_lower_case=True)
 
     def tokenize(self, sentence):
+        """token2id"""
         token_ids, segments_ids = self.tokenizer.encode(sentence)
-        token_ids, segments_ids = to_array([token_ids, segments_ids])
+        token_ids, segments_ids = to_array([token_ids], [segments_ids])
         return token_ids, segments_ids
 
     def encode(self, sentence, mod="cls"):
@@ -33,17 +34,20 @@ class BertEncoder(object):
         result = self.bert.predict([token_ids, segments_ids])
 
         if mod == "cls":
-            return result[0, :, :]
+            return result[:, 0, :]
         else:
-            return np.sum(result[1:len(token_ids)+2, :, :])/(len(token_ids)-2)
+            return np.sum(result[:, 1:len(token_ids)+2, :], axis=1)/(len(token_ids)-2)
+
+    def featurize(self, sentences):
+        return [self.encode(sentence) for sentence in sentences]
 
 
 if __name__ == '__main__':
 
     bert_encoder = BertEncoder(config=bert_config)
 
-    sentence_emb1 = bert_encoder.encode("上海自来水来自海上", mod="cls")
-    sentence_emb2 = bert_encoder.encode("我不信今天上海会下雨", mod="cls")
+    sentence_emb1 = bert_encoder.encode("上海自来水来自海上", mod="mean")
+    sentence_emb2 = bert_encoder.encode("海上水自来上海来自", mod="mean")
 
     print(sentence_emb1.shape)
     print(sentence_emb2.shape)

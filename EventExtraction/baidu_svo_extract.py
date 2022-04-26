@@ -188,6 +188,17 @@ class SVOParser:
 
         return svos
 
+    def extract_triple(self, sentences):
+
+        svos = []
+        for sentence in sentences:
+            print(sentence)
+            words, postags, child_dict_list, arcs = self.parser_main(sentence)
+            svo = self.ruler2(words, postags, child_dict_list, arcs)
+            svos += svo
+
+        return ["".join(triple) for triple in svos]
+
 '''测试'''
 def test():
     content1 = """环境很好，位置独立性很强，比较安静很切合店名，半闲居，偷得半日闲。点了比较经典的菜品，味道果然不错！烤乳鸽，超级赞赞赞，脆皮焦香，肉质细嫩，超好吃。艇仔粥料很足，香葱自己添加，很贴心。金钱肚味道不错，不过没有在广州吃的烂，牙口不好的慎点。凤爪很火候很好，推荐。最惊艳的是长寿菜，菜料十足，很新鲜，清淡又不乏味道，而且没有添加调料的味道，搭配的非常不错！"""

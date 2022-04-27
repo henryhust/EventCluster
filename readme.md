@@ -6,20 +6,20 @@
 - 对话系统中文语料：https://github.com/candlewill/Dialog_Corpus
 
 #### 2.环境准备
-2.1 python环境
+##### 2.1 python环境
 ```
 pip install -r requirements.txt
 ```
-2.2 BERT模型
+##### 2.2 BERT模型
 
 百度网盘（提取码wngt）：https://pan.baidu.com/s/1x-jIw1X2yNYHGak2yiq4RQ?pwd=wgnt
 
 #### 3.项目运行
-3.1 运行前提
+##### 3.1 运行前提
 
 修改feature/BERT/config下的BERT模型路径
 
-3.2 程序运行
+##### 3.2 程序运行
 ```
 python main.py
 ```

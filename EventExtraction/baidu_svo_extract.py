@@ -192,7 +192,6 @@ class SVOParser:
 
         svos = []
         for sentence in sentences:
-            print(sentence)
             words, postags, child_dict_list, arcs = self.parser_main(sentence)
             svo = self.ruler2(words, postags, child_dict_list, arcs)
             svos += svo

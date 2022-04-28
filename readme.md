@@ -3,7 +3,7 @@
 
 # 1.数据准备
 
-/data/cluster.txt为话题数据，涉及AI、历史、金融、电影、科学、体育等方面。
+/data/corpus.txt为话题数据，涉及AI、历史、金融、电影、科学、体育等方面。
 
 数据来源：
 - 对话系统中文语料：https://github.com/candlewill/Dialog_Corpus

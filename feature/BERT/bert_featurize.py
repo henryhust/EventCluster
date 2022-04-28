@@ -1,5 +1,7 @@
+import logging
 import numpy as np
 
+from tqdm import tqdm
 from feature.BERT.config import bert_config
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -10,6 +12,7 @@ from bert4keras.models import build_transformer_model
 
 class BertEncoder(object):
     def __init__(self, config):
+        logging.info("Bert参数初始化")
         self.bert = build_transformer_model(
             config_path=config.get("config_path"),
             checkpoint_path=config.get("checkpoint_path"),
@@ -39,7 +42,7 @@ class BertEncoder(object):
             return np.sum(result[:, 1:len(token_ids)+2, :], axis=1)/(len(token_ids)-2)
 
     def featurize(self, sentences):
-        return [self.encode(sentence) for sentence in sentences]
+        return np.array([self.encode(sentence) for sentence in tqdm(sentences)])
 
 
 if __name__ == '__main__':
@@ -51,6 +54,12 @@ if __name__ == '__main__':
 
     print(sentence_emb1.shape)
     print(sentence_emb2.shape)
-
     score = cosine_similarity(X=sentence_emb1, Y=sentence_emb2)
     print(score)
+
+
+    result = bert_encoder.featurize(sentences=["上海自来水来自海上", "海上水自来上海来自"])
+    result = np.squeeze(result, axis=1)
+
+    print(result.shape)
+

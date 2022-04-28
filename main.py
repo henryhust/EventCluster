@@ -1,27 +1,56 @@
-from feature.LASER.config import laser_config
-from feature.BERT.config import bert_config
-from feature.LASER.laser_featurize import LaserEncoder
-from feature.BERT.bert_featurize import BertEncoder
-from EventExtraction.baidu_svo_extract import SVOParser
+# encoding=utf8
+import joblib
+import logging
+import numpy as np
+from sklearn.cluster import DBSCAN
 
 
-from sklearn.cluster import DBSCAN, AgglomerativeClustering
+def get_corpus(filepath):
+    """读取数据文件"""
+    with open(filepath, "r", encoding="utf8") as fr:
+        return [line.strip() for line in fr.readlines()]
+
 
 if __name__ == '__main__':
-    sentences = ["今天天气非常好", "我能过通过这场考试我觉得很开心", "我想没有什么事情是解决不了的"]
 
-    # 三元组提取
-    triple_paser = SVOParser()
-    triples = triple_paser.extract_triple(sentences)
+    data_filepath = "./data/corpus.txt"             # 话题语料文件
 
-    # 特征表示
-    laser_encoder = LaserEncoder(config=laser_config)
-    X = laser_encoder.featurize(sentences)
+    triple_savepath = "./param/triple.list"         # 三元组存储位置
+    vec_savepath = "./param/corpus.vec"             # 文档向量存储位置
 
-    # bert_encoder = BertEncoder(config=bert_config)
-    # X = bert_encoder.featurize(sentences)
+    reuse_flag = True      # 文档向量重用标识
 
-    # 聚类
-    cluster = DBSCAN(eps=0.3, min_samples=10)
+    if not reuse_flag:
+
+        from EventExtraction.baidu_svo_extract import SVOParser
+        from feature.BERT.bert_featurize import BertEncoder
+        from feature.BERT.config import bert_config
+
+        sentences = get_corpus(filepath=data_filepath)
+
+        triple_paser = SVOParser()
+        triples = triple_paser.extract_triple(sentences)
+
+        logging.info("Bert编码中...")
+        bert_encoder = BertEncoder(config=bert_config)
+        X = bert_encoder.featurize(sentences)
+
+        logging.info(f"三元组存储位置：{triple_savepath}")
+        joblib.dump(triples, triple_savepath)
+
+        logging.info(f"文档向量存储位置：{vec_savepath}")
+        joblib.dump(X, vec_savepath)
+    else:
+        logging.info("load三元组")
+        triples = joblib.load(triple_savepath)
+
+        logging.info("load文本向量")
+        X = joblib.load(vec_savepath)
+
+    X = np.squeeze(X, axis=1)
+
+    logging.info("聚类中...")
+    cluster = DBSCAN(eps=0.3, min_samples=10, metric="cosine")
     cluster.fit(X)
+
     print(cluster.labels_)

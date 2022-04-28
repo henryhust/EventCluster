@@ -1,11 +1,13 @@
 lac
-jieba
+jieba==0.42.1
 tensorflow==1.14.0
 ddparser==1.0.6
-jieba==0.42.1
 pyltp==0.2.1
 paddlepaddle
 numpy==1.19.3
 bert4keras==0.11.3
 scikit-learn==1.0.2
 requests==2.27.1
+joblib==1.1.0
+tqdm==4.62.3
+sklearn==0.0

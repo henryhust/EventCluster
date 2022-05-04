@@ -2,7 +2,9 @@
 import joblib
 import logging
 import numpy as np
-from sklearn.cluster import DBSCAN
+from sklearn.cluster import DBSCAN, KMeans
+from sklearn.decomposition import PCA
+import matplotlib.pyplot as plt
 
 
 def get_corpus(filepath):
@@ -50,7 +52,15 @@ if __name__ == '__main__':
     X = np.squeeze(X, axis=1)
 
     logging.info("聚类中...")
-    cluster = DBSCAN(eps=0.3, min_samples=10, metric="cosine")
-    cluster.fit(X)
+    # cluster = DBSCAN(eps=0.3, min_samples=10, metric="cosine")
+    # cluster.fit(X)
 
-    print(cluster.labels_)
+    km = KMeans(n_clusters=5)
+    pca = PCA(n_components=2)
+
+    vectors_ = pca.fit_transform(X)
+    print(vectors_)
+    y_ = km.fit_predict(vectors_)  # 聚类
+    print(y_)
+
+

@@ -194,6 +194,7 @@ class SVOParser:
         for sentence in sentences:
             words, postags, child_dict_list, arcs = self.parser_main(sentence)
             svo = self.ruler2(words, postags, child_dict_list, arcs)
+            print(svo, sentence)
             svos += svo
 
         return ["".join(triple) for triple in svos]
